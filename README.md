@@ -1,1 +1,1 @@
-# covid-autoencoder-cv
+# COVID-19 CT Scan Autoencoder Computer Vision
