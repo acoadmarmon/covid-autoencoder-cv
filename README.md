@@ -35,11 +35,7 @@ Once optimal clusters have been found, it is desirable to understand what factor
 ## Discussion
 
 ## Challenges
-Our model will be big and running for a large data set which would require significant CPU resources and time.
-Though we have finalised our analysis to be based on CT scans, as we progress in the project we might need to consider X-Ray scans due to data availability.Model able to cluster scans which have similar metadata
-Implications
-Inability to find sufficient processing power for our models to run, we might not be able to perform our analysis on the complete data set. 
-If our model gives a near accurate prognosis for the testing data set, our project will be able to provide a means to speed up the process of COVID detection.
+Our model will be big and running for a large data set which would require significant CPU resources and time. Inability to find sufficient processing power for our models to run, we might not be able to perform our analysis on the complete data set. Also, though we have finalised our analysis to be based on CT scans, as we progress in the project we might need to consider X-Ray scans due to data availability. Our Model should be able to cluster scans which have similar metadata. If our model is unable to give a near accurate prognosis for the testing data set, our project may not present meaningfull results.
 
 ## Cluster Analysis (Short)
 
