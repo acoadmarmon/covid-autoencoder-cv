@@ -38,6 +38,6 @@ Running a large data set which would require significant CPU resources and time.
 
 ## References
 
-https://arxiv.org/pdf/2003.05991.pdf 
-https://link.springer.com/chapter/10.1007/978-3-642-41822-8_15
-https://www.researchgate.net/profile/Xifeng_Guo/publication/320658590_Deep_Clustering_with_Convolutional_Autoencoders/links/5a2ba172aca2728e05dea395/Deep-Clustering-with-Convolutional-Autoencoders.pdf
+1. Bank, Dor, Noam Koenigstein, and Raja Giryes. "Autoencoders." arXiv preprint arXiv:2003.05991 (2020)
+2. Song, Chunfeng, et al. "Auto-encoder based data clustering." Iberoamerican congress on pattern recognition. Springer, Berlin, Heidelberg, 2013
+3. Guo, Xifeng, et al. "Deep clustering with convolutional autoencoders." International conference on neural information processing. Springer, Cham, 2017
