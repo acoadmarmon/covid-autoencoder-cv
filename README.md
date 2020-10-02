@@ -1,6 +1,6 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
-[![Alternate Text]({covid-autoencoder-cv.jpg})]({covid-autoencoder-cv.mp4} "Link Title")
+![](covid-autoencoder-cv.mp4)
 
 
 ## Introduction/Background
