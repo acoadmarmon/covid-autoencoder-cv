@@ -1,6 +1,8 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
-![](covid-autoencoder-cv.mp4)
+<video width="320" height="240" controls>
+  <source src="covid-autoencoder-cv.mp4" type="video/mp4">
+</video>
 
 
 ## Introduction/Background
