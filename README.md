@@ -1,5 +1,12 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true" poster="path/to/poster_image.png">
+    <source src="covid-autoencoder-cv.mp4" type="video/mp4">
+  </video>
+</figure>
+
+
 ## Introduction/Background
  
 COVID-19 has infected over 30 million people and caused around a million deaths worldwide. The virus can infect the upper or lower part of the respiratory tract. Doctors have reported signs of respiratory inflammation on a chest CT scan of COVID-19 patients. Machine learning approaches on CT scan images can help differentiate between healthy and COVID-19 patients, and also predict prognosis of COVID-19 infected patients. An automated prognosis prediction model could help physicians quickly treat patients.
