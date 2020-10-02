@@ -1,7 +1,7 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
 <figure class="video_container">
-  <video controls="true" allowfullscreen="true" poster="path/to/poster_image.png">
+  <video controls="true" allowfullscreen="true" poster="covid-autoencoder-cv.jpg">
     <source src="covid-autoencoder-cv.mp4" type="video/mp4">
   </video>
 </figure>
