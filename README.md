@@ -1,6 +1,7 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
-[![Project Overview](http://img.youtube.com/vi/SCKeOqeEIaM/0.jpg)](https://youtu.be/SCKeOqeEIaM "Project Overview")
+[![Project Overview](https://img.youtube.com/vi/SCKeOqeEIaM/0.jpg)](https://www.youtube.com/watch?v=SCKeOqeEIaM)
+
 
 ## Introduction/Background
  
