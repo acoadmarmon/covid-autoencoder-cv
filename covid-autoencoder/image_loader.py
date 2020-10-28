@@ -26,13 +26,14 @@ def compute_mean_and_std(root_dir):
   std = scaler.scale_
   return mean, std
 
-def get_image_dataset(root_dir='./', split='train', resize=(224, 224), batch_size=16, shuffle=True, num_workers=4):
+def get_image_dataset(root_dir='./', split='train', resize=(224, 224), batch_size=16, shuffle=True, num_workers=0):
     
     mean, std = compute_mean_and_std(root_dir)
-
+    print(mean, std)
     curr_transforms = {
     'train': data_transforms.get_train_transforms(resize, mean, std),
     'val': data_transforms.get_test_transforms(resize, mean, std)}
-
     img_folder = datasets.ImageFolder(os.path.join(root_dir, split), curr_transforms[split])
+    print(img_folder.classes)
+
     return img_folder, torch.utils.data.DataLoader(img_folder, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
