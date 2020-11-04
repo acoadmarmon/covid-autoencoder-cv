@@ -26,14 +26,14 @@ This dataset has the following issues:
 ## Preprocessing
 We employ many standard methods to image pre-processing as described in the literature, including image normalization (using z-scores of image pixels), reshaping to a standard image size, and augmenting the training dataset to promote model generalization (Silva et al. 2020). In particular, random horizontal flipping and color jitter is ideal for our training dataset because it changes the CT images, but maintains the general standard structure. See the images below to get an intuition for how this image processing pipeline works. The second and third images are also horizontally flipped.
 
-<img src="./outputs/transforms_0_labelled.png" alt="Transforms 0" width="250" height="125"/> <img src="./outputs/transforms_1_labelled.png" alt="Transforms 0" width="250" height="125"/>  <img src="./outputs/transforms_2_labelled.png" alt="Transforms 0" width="250" height="125"/> 
+<p align=center> <img src="./outputs/transforms_0_labelled.png" alt="Transforms 0" width="250" height="125"/> <img src="./outputs/transforms_1_labelled.png" alt="Transforms 0" width="250" height="125"/>  <img src="./outputs/transforms_2_labelled.png" alt="Transforms 0" width="250" height="125"/> </p>
 <h5> <b>Figure 1</b>  Transformed images using standard image pre-processing methods, including image normalization (using z-scores of image pixels), reshaping to a standard image size, random horizontal flipping, and color jitter. Transformed pixel values are described for each image above the respective image.</h5>
 <br>
 
 ## Initial Results
 As of now, we have implemented the Autoencoder model we are using to extract a low dimensional feature representation from each image that will then be used in clustering. For the initial run, we used a fairly small Autoencoder architecture with just three encoding and decoding layers that take an image of size 224x224x1 to 23x23x16 and then back to 224x224x1. In order to train the model, we minimize the Mean Squared Error (MSE) loss between the original image and the reconstructed image. Over the course of 100 epochs with a batch size of 16 we were able to achieve an MSE of .725963 on the unseen validation set. The next step will be to try different network parameters that optimize performance on the validation set. Here’s the architecture of the initial autoencoder we used as our model:
 
-<img src="./autoencoder_architecture.png" alt="Transforms 0" width="750" height="350"/>
+<div align=center> <img src="./autoencoder_architecture.png" alt="Transforms 0" width="750" height="350"/> </div>
 
 <h5 width="750px"> <b>Figure 2</b>  Initial Autoencoder architecture that transforms an image of size 224x224x1 to 23x23x16 and then back to 224x224x1 to construct an embedding that represents the high dimensional image. We use MSE loss to determine the reconstruction quality.</h5>
 <br>
@@ -41,8 +41,8 @@ As of now, we have implemented the Autoencoder model we are using to extract a l
 Here are the results on validation data from this first Autoencoder model trained on the entire dataset of 1300 training images:
 <br>
 
-<img src="./outputs/autoencoder_output_labelled_0.png" alt="Transforms 0" width="400" height="200"/> <img src="./outputs/autoencoder_output_labelled_1.png" alt="Transforms 0" width="400" height="200"/> </p>
-<p align=center> <img src="./outputs/autoencoder_output_labelled_2.png" alt="Transforms 0" width="400" height="200"/> <img src="./outputs/autoencoder_output_labelled_3.png" alt="Transforms 0" width="400" height="200"/>
+<div align=center> <img src="./outputs/autoencoder_output_labelled_0.png" alt="Transforms 0" width="400" height="200"/> <img src="./outputs/autoencoder_output_labelled_1.png" alt="Transforms 0" width="400" height="200"/> </div>
+<div align=center> <img src="./outputs/autoencoder_output_labelled_2.png" alt="Transforms 0" width="400" height="200"/> <img src="./outputs/autoencoder_output_labelled_3.png" alt="Transforms 0" width="400" height="200"/> </div>
 
 <h5> <b>Figure 3</b>  Images from the validation set along with their reconstructed image output from the trained Autoencoder. Based on our analysis, the Autoencoder is able to re-create the structure of the CT scan images, but isn’t yet able to capture all the nuances present in the lungs of the patient.</h5>
 <br>
@@ -63,7 +63,8 @@ Since we are dealing with a partially-labeled data set we will employ semi-super
 ### Clustering performance
 We decided to use internal measures to compute the clustering validity for the results of our clustering algorithm. We use Davies Bouldin score and Silhouette score to show the cluster validity. Davies Bouldin score is the average similarity measure of each cluster, where similarity is the ratio of inter and intra cluster distances. The minimum score is 0, and a lower score indicates better clustering. Silhouette score uses mean intra cluster distance (di) and mean nearest cluster distance (do). The score is computed using the below formula: 
 
-<img src="https://latex.codecogs.com/gif.latex?SC&space;=&space;\frac{d_o&space;-&space;d_i}{max(d_o,&space;d_i)}" alt="Transforms 0"/>
+
+<div align=center> <img src="https://latex.codecogs.com/gif.latex?SC&space;=&space;\frac{d_o&space;-&space;d_i}{max(d_o,&space;d_i)}" alt="Transforms 0"/> </div>
 
 The score ranges from -1 to 1. 1 indicates good clustering, while 0 indicates overlapping clusters and -1 indicates incorrect clustering. We will use these approaches to test the validity of the clusters generated by our clustering algorithm.
 
@@ -72,7 +73,7 @@ The initial models created come with a few current limitations.  The first being
 
 <br>  
 
-<img src="./outputs/data_visualization_0.png" alt="Transforms 0" width="250" height="175"/> <img src="./outputs/data_visualization_1.png" alt="Transforms 0" width="250" height="175"/>  <img src="./outputs/data_visualization_2.png" alt="Transforms 0" width="250" height="175"/>
+<div align=center> <img src="./outputs/data_visualization_0.png" alt="Transforms 0" width="250" height="175"/> <img src="./outputs/data_visualization_1.png" alt="Transforms 0" width="250" height="175"/>  <img src="./outputs/data_visualization_2.png" alt="Transforms 0" width="250" height="175"/> </div>
 
 <h5> <b>Figure 4</b>  Data visuals extracted from metadata of the dataset consolidated by Rahimzadeh et al. Key insights include that our data skews negative (95 vs 282), the average age of someone with covid is significantly higher than one without (50 vs 37), and males are more likely to have covid than females (56/95 positives are men).  </h5>
 <br>
