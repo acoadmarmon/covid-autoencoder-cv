@@ -53,7 +53,7 @@ Before we can employ a clustering algorithm among the various algorithms and pro
 
 Hopkin’s statistics is easy to use and a reliable analysis to derive the conclusion for clustering. For this analysis two sets of data points are considered. First, a set of uniform randomly distributed data points (m), and second, a random sample of data points (m) from the original dataset (n), where m << n. From these two datasets, two distances are calculated. First, the distance of each randomly distributed data points to its nearest neighbor in the original dataset (ui), and second, the distance of each randomly sampled data point to its nearest neighbor in the original dataset (wi).  We then derive a value from the below formula:
 
-$$ H=i = 1muidi = 1muid + i = 1mwid $$
+$$H = \frac{\sum_{i = 1}^m u_i^d}{\sum_{i = 1}^m u_i^d + \sum_{i = 1}^m w_i^d}$$
 
 where d denotes the dimension of data points. A value equal to one 1 denotes a highly clusterizable dataset, a value of 0.5 denotes a randomly distributed dataset, and 0 denotes a uniformly distributed dataset.
 
