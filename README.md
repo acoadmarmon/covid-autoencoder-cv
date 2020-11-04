@@ -26,7 +26,7 @@ This dataset has the following issues:
 ## Preprocessing
 We employ many standard methods to image pre-processing as described in the literature, including image normalization (using z-scores of image pixels), reshaping to a standard image size, and augmenting the training dataset to promote model generalization (Silva et al. 2020). In particular, random horizontal flipping and color jitter is ideal for our training dataset because it changes the CT images, but maintains the general standard structure. See the images below to get an intuition for how this image processing pipeline works. The second and third images are also horizontally flipped.
 
-<img src="./outputs/transforms_0_labelled.png" alt="Transforms 0" width="333" height="165"/> <img src="./outputs/transforms_1_labelled.png" alt="Transforms 0" width="333" height="165"/>  <img src="./outputs/transforms_2_labelled.png" alt="Transforms 0" width="333" height="165"/>
+<img src="./outputs/transforms_0_labelled.png" alt="Transforms 0" width="300" height="140"/> <img src="./outputs/transforms_1_labelled.png" alt="Transforms 0" width="300" height="140"/>  <img src="./outputs/transforms_2_labelled.png" alt="Transforms 0" width="300" height="140"/>
 <h5> <b>Figure 1</b>  Transformed images using standard image pre-processing methods, including image normalization (using z-scores of image pixels), reshaping to a standard image size, random horizontal flipping, and color jitter. Transformed pixel values are described for each image above the respective image.</h5>
 <br>
 
