@@ -12,7 +12,8 @@ def get_test_transforms(input_size,
       transforms.Resize(input_size),
       transforms.Grayscale(),
       transforms.ToTensor(),
-      transforms.Normalize(mean=pixel_mean, std=pixel_std)
+      transforms.Normalize(mean=pixel_mean, std=pixel_std),
+      transforms.Lambda(lambda x: x.repeat(3, 1, 1))
   ])
 
 def get_no_transforms():
@@ -32,4 +33,5 @@ def get_train_transforms(input_size,
       transforms.Grayscale(),
       transforms.ToTensor(),
       transforms.Normalize(mean=pixel_mean, std=pixel_std),
+      transforms.Lambda(lambda x: x.repeat(3, 1, 1))
   ])

@@ -17,6 +17,7 @@ import image_loader
 import subprocess
 import argparse
 import datetime
+from pytorch_ssim.pytorch_ssim import SSIM
 
 subprocess.run('..\cuda_params.bat')
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -33,6 +34,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, model_typ
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_loss = np.inf
+    best_acc = 0.0
+    num_rounds_no_improvement = 0
 
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 
@@ -48,7 +51,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, model_typ
                 model.eval()   # Set model to evaluate mode
 
             running_loss = 0.0
-            #running_corrects = 0
+            running_corrects = 0
 
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
@@ -66,7 +69,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, model_typ
                     loss = None
                     if model_type == 'autoencoder':
                         preds = outputs
-                        loss = criterion(outputs, inputs)
+                        loss = -criterion(outputs, inputs)
                     else:
                         _, preds = torch.max(outputs, 1)
                         loss = criterion(outputs, labels)
@@ -78,27 +81,36 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25, model_typ
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
-                #running_corrects += torch.sum(preds == labels.data)
+                running_corrects += torch.sum(preds == labels.data)
             if phase == 'train':
                 scheduler.step()
 
             epoch_loss = running_loss / dataset_sizes[phase]
-            #epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
             print('{} Loss: {:.4f}'.format(
                 phase, epoch_loss))
+            print('{} Acc: {:.4f}'.format(
+                phase, epoch_acc))
 
             # deep copy the model
+            if phase == 'val' and abs(abs(epoch_loss) - abs(best_loss)) < .001:
+                num_rounds_no_improvement = num_rounds_no_improvement + 1
+
+
             if phase == 'val' and epoch_loss < best_loss:
                 best_loss = epoch_loss
+                best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+        
+        if num_rounds_no_improvement > 5:
+            break
 
-        print()
 
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
         time_elapsed // 60, time_elapsed % 60))
-    #print('Best val Acc: {:4f}'.format(best_acc))
+    print('Best val Acc: {:4f}'.format(best_acc))
 
     # load best model weights
     model.load_state_dict(best_model_wts)
@@ -115,7 +127,8 @@ def main(args):
     criterion = None
     if args.model_type == 'autoencoder':
         model = models.Autoencoder()
-        criterion = nn.MSELoss()
+        #criterion = nn.MSELoss()
+        criterion = SSIM(window_size = 11)
     else:
         model = torchvision.models.resnet18(pretrained=True)
         num_features = model.fc.in_features

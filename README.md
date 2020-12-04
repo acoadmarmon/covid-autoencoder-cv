@@ -15,6 +15,8 @@ Develop a machine learning approach to aid the differentiation between healthy a
 
 Because the CT images are not well labelled, we propose an unsupervised learning approach that can be tied back to existing metadata, like mortality, age, BMI, etc. To accomplish this, we will train an Autoencoder model to create a low-dimensional representation of each image (Bank et al. 2020), and then use different clustering methods to determine optimal groupings for these images based on their encoding (Song et al. 2013)(Guo et al. 2017). Once these groups are instantiated, we can then associate image metadata to each cluster to determine whether there are statistically significant attributes tied to specific clusters. If it could be proven that attributes like mortality rate or success with intubation are linked to certain clusters, that information could be incredibly valuable for clinical outcomes. Also, although we have limited prognosis labels, we will also determine autoencoder performance by trying to classify the image based on the encoding using fully connected layers.
 
+We also train a ResNet-18 model on the existing labels to compare results against the Autoencoder approach as well as the previous work performed on this dataset: <i>A large dataset of real patients CT scans for SARS-CoV-2 identification</i> (Soares et al. 2020).
+
 ## Dataset Description
 
 The SARS-CoV-2 CT-scan dataset consists of 2482 CT scans from 120 patients, with 1252 CT scans of 60 patients infected by SARS-CoV-2 from males (32) and females (28), and 1230 CT scan images of 60 non-infected patients by SARS-CoV-2 from males (30) and females (30), but presenting other pulmonary diseases (Soares et al. 2020). This dataset consists of digital scans of printed CT exams of patients from hospitals of São Paulo, Brazil.
@@ -30,12 +32,19 @@ We employ many standard methods to image pre-processing as described in the lite
 <h5> <b>Figure 1</b>  Transformed images using standard image pre-processing methods, including image normalization (using z-scores of image pixels), reshaping to a standard image size, random horizontal flipping, and color jitter. Transformed pixel values are described for each image above the respective image.</h5>
 <br>
 
-## Initial Results
-As of now, we have implemented the Autoencoder model we are using to extract a low dimensional feature representation from each image that will then be used in clustering. For the initial run, we used a fairly small Autoencoder architecture with just three encoding and decoding layers that take an image of size 224x224x1 to 23x23x16 and then back to 224x224x1. In order to train the model, we minimize the Mean Squared Error (MSE) loss between the original image and the reconstructed image. Over the course of 100 epochs with a batch size of 16 we were able to achieve an MSE of .725963 on the unseen validation set. The next step will be to try different network parameters that optimize performance on the validation set. Here’s the architecture of the initial autoencoder we used as our model:
+## Results
+
+Using the existing labels in the dataset, we trained a ResNet-18 model to predict whether a given CT Scan had COVID or not. We followed a similar process as in related work (Soares et al. 2020) to treat image as an independent sample and split our data into 80% training data and 20% evaluation. Given this data split, we were able to outperform the model xDNN model proposed by Soares et al. by raising the F1-Score for COVID prediction from 97.31 to 97.87 on unseen data.
+
+<img src="./outputs/resnet_18_outputs.PNG" alt="Transforms 0" width="900" height="800"/> 
+<h5> <b>Figure 2</b>  Results on both COVID and Non-COVID images in our hold-out evaluation set. Compared to the previous work by Soares et al., our model was able to increase the F1-Score from 97.31 to 97.87.</h5>
+<br>
+
+We have also implemented the Autoencoder model we are using to extract a low dimensional feature representation from each image that will then be used in clustering. We used an Autoencoder architecture with four encoding and four decoding layers that take an image of size 224x224x1 to 500x1 and then back to 224x224x1. In order to train the model, we minimize the Mean Squared Error (MSE) loss between the original image and the reconstructed image. Over the course of 100 epochs with a batch size of 16 we were able to achieve an MSE of .725963 on the unseen validation set. Here’s the architecture of the autoencoder we used as our model:
 
 <img src="./autoencoder_architecture.png" alt="Transforms 0" width="900" height="450"/>
 
-<h5 width="750px"> <b>Figure 2</b>  Initial Autoencoder architecture that transforms an image of size 224x224x1 to 23x23x16 and then back to 224x224x1 to construct an embedding that represents the high dimensional image. We use MSE loss to determine the reconstruction quality.</h5>
+<h5 width="750px"> <b>Figure 3</b>  Autoencoder architecture that transforms an image of size 224x224x1 to 500x1 and then back to 224x224x1 to construct an embedding that represents the high dimensional image. We use MSE loss to determine the reconstruction quality.</h5>
 <br>
 
 Here are the results on validation data from this first Autoencoder model trained on the entire dataset of 1300 training images:
@@ -44,9 +53,9 @@ Here are the results on validation data from this first Autoencoder model traine
 <img src="./outputs/autoencoder_output_labelled_0.png" alt="Transforms 0" width="450" height="225"/> <img src="./outputs/autoencoder_output_labelled_1.png" alt="Transforms 0" width="450" height="225"/>
 <img src="./outputs/autoencoder_output_labelled_2.png" alt="Transforms 0" width="450" height="225"/> <img src="./outputs/autoencoder_output_labelled_3.png" alt="Transforms 0" width="450" height="225"/>
 
-<h5> <b>Figure 3</b>  Images from the validation set along with their reconstructed image output from the trained Autoencoder. Based on our analysis, the Autoencoder is able to re-create the structure of the CT scan images, but isn’t yet able to capture all the nuances present in the lungs of the patient.</h5>
+<h5> <b>Figure 4</b>  Images from the validation set along with their reconstructed image output from the trained Autoencoder. The model was able to reconstruct the structure and many of the fine-details present in the images.</h5>
 <br>
-As you can see, the model is able to re-create the structure of the CT scan images, but isn’t yet able to capture all the nuances present in the lungs of the patient. To account for this, we plan on adding more model complexity to the Autoencoder so it can capture more descriptive information. To accomplish this, we plan on leveraging the architecture from VGG-16 to create an encoder, and inverse VGG-16 for the decoder model. Using this approach, we plan on being able to capture the complex information in the lung tissue. We will also be using these low dimensional feature representations to classify the tissue samples using two fully connected layers at the end of the encoding phase.
+
 
 ## Hopkin’s Statistics to judge clustering tendency
 Before we can employ a clustering algorithm among the various algorithms and procedures present in literature for our dataset, it is insightful to understand the clustering tendency of our dataset. This implies that we need to analyse our dataset to prove that the data points can be partitioned into groups without already knowing the groups themselves. A dataset which does not already contain natural groups of data points is considered a randomly or uniformly distributed dataset and should not be considered for clustering. For this we decided to use hopkin’s statistics to realise whether a clustering algorithm will provide meaningful results.
