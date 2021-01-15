@@ -1,21 +1,15 @@
 # COVID-19 CT Scan Autoencoder Computer Vision
 
-[![Project Overview](https://img.youtube.com/vi/SCKeOqeEIaM/0.jpg)](https://www.youtube.com/watch?v=SCKeOqeEIaM)
-
+[![Project Overview](https://img.youtube.com/vi/k380fy1xa90/0.jpg)](https://youtu.be/k380fy1xa90)
 
 ## Introduction/Background
  
-COVID-19 has infected over 30 million people and caused around a million deaths worldwide. The virus can infect the upper or lower part of the respiratory tract. Doctors have reported signs of respiratory inflammation on a chest CT scan of COVID-19 patients. Machine learning approaches on CT scan images can help differentiate between healthy and COVID-19 patients, and also predict prognosis of COVID-19 infected patients. An automated prognosis prediction model could help physicians quickly treat patients.
+COVID-19 has infected over 66 million people and caused around a million deaths worldwide. The virus can infect the upper or lower part of the respiratory tract. Doctors have reported signs of respiratory inflammation on a chest CT scan of COVID-19 patients. Machine learning approaches on CT scan images can help differentiate between healthy and COVID-19 patients, and also predict prognosis of COVID-19 infected patients. An automated prognosis prediction model could help physicians quickly treat patients.
  
 ## Problem definition
  
 Develop a machine learning approach to aid the differentiation between healthy and COVID-19 patients, and in the prognosis of COVID-19 infected patients using CT scan images.
 
-## Methodology
-
-Because the CT images are not well labelled, we propose an unsupervised learning approach that can be tied back to existing metadata, like mortality, age, BMI, etc. To accomplish this, we will train an Autoencoder model to create a low-dimensional representation of each image (Bank et al. 2020), and then use different clustering methods to determine optimal groupings for these images based on their encoding (Song et al. 2013)(Guo et al. 2017). Once these groups are instantiated, we can then associate image metadata to each cluster to determine whether there are statistically significant attributes tied to specific clusters. If it could be proven that attributes like mortality rate or success with intubation are linked to certain clusters, that information could be incredibly valuable for clinical outcomes. Also, although we have limited prognosis labels, we will also determine autoencoder performance by trying to classify the image based on the encoding using fully connected layers.
-
-We also train a ResNet-18 model on the existing labels to compare results against the Autoencoder approach as well as the previous work performed on this dataset: <i>A large dataset of real patients CT scans for SARS-CoV-2 identification</i> (Soares et al. 2020).
 
 ## Dataset Description
 
@@ -24,6 +18,12 @@ This dataset has the following issues:
 
 * The images have no standard regarding image size (the dimensions of the smallest image in the dataset are 104×153 while the largest images are 484×416). 
 * The dataset also lacks standardization regarding the contrast of the images.
+
+## Methodology
+
+We propose an unsupervised learning approach that can be tied back to existing metadata, like mortality, age, BMI, COVID / Non-COVID etc. To accomplish this, we will train an Autoencoder model to create a low-dimensional representation of each image (Bank et al. 2020), and then use different clustering methods to determine optimal groupings for these images based on their encoding (Song et al. 2013)(Guo et al. 2017). Once these groups are instantiated, we can then associate image metadata to each cluster to determine whether there are statistically significant attributes tied to specific clusters. If it could be proven that attributes like mortality rate or success with intubation are linked to certain clusters, that information could be incredibly valuable for clinical outcomes. Also, although we have limited prognosis labels, we will also determine autoencoder performance by trying to classify the image based on the encoding using fully connected layers.
+
+We also train a ResNet-18 model on the existing labels to compare results against the Autoencoder approach as well as the previous work performed on this dataset: <i>A large dataset of real patients CT scans for SARS-CoV-2 identification</i> (Soares et al. 2020).
 
 ## Preprocessing
 We employ many standard methods to image pre-processing as described in the literature, including image normalization (using z-scores of image pixels), reshaping to a standard image size, and augmenting the training dataset to promote model generalization (Silva et al. 2020). In particular, random horizontal flipping and color jitter is ideal for our training dataset because it changes the CT images, but maintains the general standard structure. See the images below to get an intuition for how this image processing pipeline works. The second and third images are also horizontally flipped.
@@ -56,6 +56,11 @@ Here are the results on validation data from this first Autoencoder model traine
 <h5> <b>Figure 4</b>  Images from the validation set along with their reconstructed image output from the trained Autoencoder. The model was able to reconstruct the structure and many of the fine-details present in the images.</h5>
 <br>
 
+We considered two different clustering algorithms, KMeans and Gaussian Mixture Model (GMM) to cluster the embeddings of the CT Scans and to see how effectively the algorithm was able to cluster the embeddings according to COVID diagnosis. In order to optimize the hyperparameters (number of clusters/components, k) for KMeans and GMM we used 5-fold cross validation. We ranged k from 2 to 20 and tracked the test set purity of each fold. The k which yielded the highest average test set purity was taken as the optimal hyperparameter. The figure below shows our results. For both KMeans and GMM, 20 was the optimal number of clusters or components. If we wish to penalize our model having too many clusters, we can visually look to see at what number of clusters the purity increase becomes minimal. For KMeans this is 18 clusters and for GMM this is 9 components. 
+
+<img src="./outputs/hp_opt.png" alt="Transforms 0" width="433" height="560"/>
+
+For the final models we used the k which yielded highest purity and an 80/20 train/test split. We found that KMeans exhibited a test set purity of .557 while GMM exhibited a test set purity of .552
 
 ## Hopkin’s Statistics to judge clustering tendency
 Before we can employ a clustering algorithm among the various algorithms and procedures present in literature for our dataset, it is insightful to understand the clustering tendency of our dataset. This implies that we need to analyse our dataset to prove that the data points can be partitioned into groups without already knowing the groups themselves. A dataset which does not already contain natural groups of data points is considered a randomly or uniformly distributed dataset and should not be considered for clustering. For this we decided to use hopkin’s statistics to realise whether a clustering algorithm will provide meaningful results.
@@ -65,6 +70,8 @@ Hopkin’s statistics is easy to use and a reliable analysis to derive the concl
 <div align=center> <img src="https://latex.codecogs.com/gif.latex?H&space;=&space;\frac{\sum_{i&space;=&space;1}^m&space;u_i^d}{\sum_{i&space;=&space;1}^m&space;u_i^d&space;&plus;&space;\sum_{i&space;=&space;1}^m&space;w_i^d}" alt="Transforms 0"/> </div>
 
 where d denotes the dimension of data points. A value equal to one 1 denotes a highly clusterizable dataset, a value of 0.5 denotes a randomly distributed dataset, and 0 denotes a uniformly distributed dataset.
+
+The test gave a score of 0.62 for the embeddings, and indicated that the data points were clusterizable.
 
 ## Clustering
 Since we are dealing with a partially-labeled data set we will employ semi-supervised clustering on the auto-encoded image features (i.e. embeddings). Our embeddings will be split into a training and test set. We will train a K Means model on the training set. We will then evaluate the purity of this trained classifier on the labelled data in the test set. In order to tune our hyper-parameters (i.e. number of clusters, k) we will train 19 models, with k varying from 2 to 20, and see which model has the highest test set purity. This will be the final clustering model. The code for this entire methodology has been written and tested using a hypothetical data set. 
@@ -76,6 +83,8 @@ We decided to use internal measures to compute the clustering validity for the r
 <div align=center> <img src="https://latex.codecogs.com/gif.latex?SC&space;=&space;\frac{d_o&space;-&space;d_i}{max(d_o,&space;d_i)}" alt="Transforms 0"/> </div>
 
 The score ranges from -1 to 1. 1 indicates good clustering, while 0 indicates overlapping clusters and -1 indicates incorrect clustering. We will use these approaches to test the validity of the clusters generated by our clustering algorithm.
+
+For the KMeans clustering, we got a silhouette score of -0.18 which indicates overlapping clusters. This can be attributed to the fact that we had 20 clusters of images with/without COVID. As there could be similarities between images in different clusters, we can expect a data point to be assigned to more than one cluster. We also got the score of 130.54 from the Davies Bouldin test. Such a high score can be attributed to the "Curse of Dimensionality", as each point has 501 features.  
 
 ## Discussion & Future Work
 The initial models created come with a few current limitations.  The first being that the dataset is limited in size.  The second being that the dataset does not contain any metadata that could aid in prediction accuracy.  We hope to address these concerns by analyzing a second dataset (Rahimzadeh 2020). This dataset includes 63,849 images, around 25x our current dataset, from 377 patients and includes an entire inhale-exhale cycle of a patient’s lungs. The possible benefits of this are being able to detect differences in each facet of the breathing cycle, and not simply when the lungs are fully inflated. The other advantage of this dataset is it includes basic metadata about each of the patients.  These metrics include the sex of the patient as well as their age.  While we know that this is not a lot of metadata, there are very clear distinctions within the groups.   Below are three images giving an overview of the dataset.  It can be clearly seen from these images that our data skews negative (95 vs 282), the average age of someone with covid is significantly higher than one without (50 vs 37), and males are more likely to have covid than females (56/95 positives are men). We hope that this preliminary information can help us more properly discern Covid cases. 
